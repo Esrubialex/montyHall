@@ -1,2 +1,6 @@
 test.py
 .vscode
+montyhall.spec
+__pycache__
+README.md
+.gitignore
