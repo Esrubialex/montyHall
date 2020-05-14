@@ -54,9 +54,11 @@ def montyHell(puertainicial = 0, totalpuertas = 0, intentos = 1):
     print("HAS ACERTADO: {} VECES".format(aciertosTotales))
     print("HAS FALLADO: {} VECES".format(fracasosTotales))
 
+    probabilidadObtenida = aciertosTotales / (aciertosTotales + fracasosTotales) 
+
     print("\n EL NUMERO TOTAL DE PUERTAS HA SIDO: {}".format(totalpuertas))
     print("\n- EL PORCENTAJE QUE DEBERIA SALIR AL CAMBIAR DE PUERTA ES: {}%".format(probabilidadreal))
-    print("\n- MIENTRAS QUE EL PORCENTAJE REAL HA SIDO: {}%".format(100 * (aciertosTotales / totalpuertas)))
+    print("\n- MIENTRAS QUE EL PORCENTAJE REAL HA SIDO: {}%".format(100 * probabilidadObtenida))
 
     xIntentos = [0]  # VARIABLE QUE GUARDA VALORES X
     for i in range(1, intentosiniciales + 1):
@@ -65,7 +67,7 @@ def montyHell(puertainicial = 0, totalpuertas = 0, intentos = 1):
     plt.plot(xIntentos, aciertos)  # GRAFICA DE ACIERTOS AL CAMBIAR PUERTA
     plt.plot(xIntentos, fracasos)  # GRAFICA DE ERRORES AL CAMBIAR PUERTA
 
-    plt.show()
+    #plt.show()
 
 
 
