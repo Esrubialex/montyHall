@@ -5,87 +5,95 @@ import matplotlib.patches as mpatches
 
 plt.rcParams['toolbar'] = 'None' 
 
-def montyHell(puertainicial, totalpuertas, intentos = 1):
+def montyHell(initialDoor, totalDoors, tries = 1):
 
-    coche = []  # EL COCHE SERA UN 1 Y LAS CABRAS 0
-    aciertos = [0]
-    fracasos = [0]
-    contadorAciertos = 0
-    contadorFracasos = 0
+    contest = []  # CONTEST, WHERE THE (0) REPRESENTS THE "GOATS" AND THE (1) REPRESENTS THE "CAR"
+    
+    # ARRAY TO MAKE THE GRAPH
+    success = [0] 
+    fails = [0]
 
-    for total in range(totalpuertas):  # LLENA EL ARRAY DE CEROS (CABRAS)
-        coche.insert(total, 0)
+    # SUCCESS/FAILS COUNTERS
+    successCounter = 0
+    failsCounter = 0
 
-    probabilidadreal = ((1 + totalpuertas - 2) / totalpuertas) * 100
-    intentosiniciales = intentos  # INTENTOS INICIALES PARA CALCULAR EL PORCENTAJE DE ACIERTO
+    for total in range(totalDoors):  # FILL THE ENTIRE CONTEST WITH 0
+        contest.insert(total, 0)
 
-    while intentos > 0:
+    realProb = ((1 + totalDoors - 2) / totalDoors) * 100  # REAL PROBABILITY
+    initialTries = tries  # INITIAL TRIES TO CALCULATE THE SUCCESS PROBABILITY
 
+    while tries > 0:
+
+        # LOOK IF THERE IS ANY (1) "CAR" IN THE CONTEST AND REMOVES IT
         try:
-            tempC = coche.index(1)  # BUSCA SI HAY UN 1
-            coche[tempC] = 0
+            tempC = contest.index(1)  
+            contest[tempC] = 0
         except ValueError:
             pass
 
-        posicioncoche = random.randint(0, totalpuertas - 1)  # INDICA LA POSICION O INDEX DEL COCHE
-        coche[posicioncoche] = 1
+        carPos = random.randint(1, totalDoors)  # GENERATE RANDOM POS FOR THE CAR BETWEEN 1 AND TOTAL DOORS
+        contest[carPos - 1] = 1
 
-        if coche[puertainicial - 1] == 1:  # IF THE CAR IS IN THE SAME DOOR YOU PICKED FIRST
-            contadorFracasos += 1
-            fracasos.append(contadorFracasos)
-            aciertos.append(contadorAciertos)
-        elif coche[puertainicial - 1] != 1:
-            contadorAciertos += 1
-            fracasos.append(contadorFracasos)  # IF THE CAR ISN'T IN THE SAME DOOR THAT YOU ARE
-            aciertos.append(contadorAciertos)
+        # IF THE CAR IS IN THE SAME DOOR YOU PICKED FIRST
+        if contest[initialDoor - 1] == 1:  
+            failsCounter += 1
+            fails.append(failsCounter)
+            success.append(successCounter)
 
-        intentos -= 1
+        # IF THE CAR ISN'T IN THE SAME DOOR THAT YOU ARE
+        elif contest[initialDoor - 1] != 1:
+            successCounter += 1
+            fails.append(failsCounter)
+            success.append(successCounter)
 
-    aciertosTotales = aciertos[len(aciertos) - 1]
-    fracasosTotales = fracasos[len(fracasos) - 1]
+        tries -= 1
 
-    print("HAS ACERTADO: {} VECES".format(aciertosTotales))
-    print("HAS FALLADO: {} VECES".format(fracasosTotales))
+    #  LOOK FOR THE LAST NUMBER OF THE ARRAYS TO CHECK WHAT IS THE TOTAL SUCCESS/FAILS
+    totalSuccess = success[len(success) - 1]
+    totalFails = fails[len(fails) - 1]
 
-    probabilidadObtenida = aciertosTotales / (aciertosTotales + fracasosTotales) 
+    obtainedProb = totalSuccess / (totalSuccess + totalFails)  # OBTAINED PROBABILITY
 
-    print("\n EL NUMERO TOTAL DE PUERTAS HA SIDO: {}".format(totalpuertas))
-    print("\n- EL PORCENTAJE QUE DEBERIA SALIR AL CAMBIAR DE PUERTA ES: {}%".format(probabilidadreal))
-    print("\n- MIENTRAS QUE EL PORCENTAJE REAL HA SIDO: {}%".format(100 * probabilidadObtenida))
+    xtries = [0]  # ARRAY WHICH STORES THE TRIES TO USE IT IN THE GRAPH
+    for i in range(1, initialTries + 1):
+        xtries.append(i)
 
-    xIntentos = [0]  # VARIABLE QUE GUARDA VALORES X
-    for i in range(1, intentosiniciales + 1):
-        xIntentos.append(i)
+    successPlot, = plt.plot(xtries, success, label='Door Changed')  # SUCCESS GRAPHIC PLOT
+    successPlot, = plt.plot(xtries, fails, label='Initial Door')  # FAIL GRAPHIC PLOT
 
-    lineaAciertos, = plt.plot(xIntentos, aciertos, label='Puerta Cambiada')  # GRAFICA DE ACIERTOS AL CAMBIAR PUERTA
-    lineaFracasos, = plt.plot(xIntentos, fracasos, label='Puerta Inicial')  # GRAFICA DE ERRORES AL CAMBIAR PUERTA
+    plt.legend([successPlot, successPlot], ['Door Changed: {}'.format(totalSuccess), 'Initial Door: {}'.format(totalFails)], loc='upper left')  # LEGEND WHICH SAYS HOW MANY FAILS/SUCCESS
 
-    plt.legend([lineaAciertos, lineaFracasos], ['Puerta Cambiada: {}'.format(aciertosTotales), 'Puerta Inicial: {}'.format(fracasosTotales)], loc='upper left')
+    # LABELS
+    plt.xlabel("Nº Tries")
+    plt.ylabel("Nº Success")
 
-    plt.xlabel("Nº intentos")
-    plt.ylabel("Nº aciertos")
-
-    plt.xlim(right = intentosiniciales, left = 0)
+    plt.xlim(right = initialTries, left = 0) 
     plt.ylim(bottom = 0)
 
     fig = plt.figure(1)
     ax = fig.add_subplot(111)
     fig.subplots_adjust(top=0.85)
-    fig.suptitle('Monty Hall Problem', fontsize=14, fontweight='bold')
-    ax.set_title('RESULTADO ESPERADO: {}%    -    RESULTADO OBTENIDO: {}%'.format(round(probabilidadreal, 2), round(100 * probabilidadObtenida, 2)))
-    fig.canvas.set_window_title('La Paradoja de Monty Hall')
+    fig.suptitle('Monty Hall Paradox', fontsize=14, fontweight='bold')
+    ax.set_title('Expected: {}%    -    Obtained: {}%'.format(round(realProb, 2), round(100 * obtainedProb, 2)))
+    fig.canvas.set_window_title('Monty Hall Paradox')
 
     plt.show()
 
 
 while 1 > 0:
-    opcion = input("\n\n\n############################## Quieres empezar con el PROBLEMA DE MONTY HALL? SI (s) NO (n): ")
+    opcion = input('''Want to start? if is Yes, write "s": ''')
     if opcion.lower() == 's':
 
-        intentos = int(input("\n\n\n- Cuantas veces quieres que se haga el concurso (intentos): "))
-        totalpuertas = int(input("\n- Cuantas puertas quieres que hayan?: "))
-        puertainicial = int(input("\n- Que puerta quieres elegir? [1 - {}]: ".format(totalpuertas)))
-        montyHell(puertainicial, totalpuertas, intentos)
+        print('''\nYou need to choose:
+        1) Tries
+        2) Total Doors
+        3) Initil Door
+        - ALWAYS NUMBER > 0 -''')
+        tries = int(input("\nHow many tries do you want?: "))
+        totalDoors = int(input("How many doors do you want?: "))
+        initialDoor = int(input("\nChoose your starting door [1 - {}]: ".format(totalDoors)))
+        montyHell(initialDoor, totalDoors, tries)
     else:
         exit()
 
