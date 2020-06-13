@@ -35,7 +35,7 @@ _For more examples and usage, please refer to the [Wiki][wiki]._
 
 ## My Profiles
 
-My Twitter and Mail: [@Esrubialex](https://twitter.com/dbader_org) – esrubialex@gmail.com
+My Twitter and Mail: [@Esrubialex](https://twitter.com/esrubialex) – esrubialex@gmail.com
 
 Distributed under the XYZ license. See ``LICENSE`` for more information.
 
